@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Translator</title>
+    <link rel="stylesheet" href="frontend/style.css">
+</head>
+<body>
+
+<h2>Translate Your Document</h2>
+
+<form id="uploadForm">
+    <label>Select file (.pdf or .docx):</label>
+    <input type="file" id="fileInput" required>
+
+    <label>Translate to:</label>
+    <select id="language">
+        <option value="English">English</option>
+        <option value="French">French</option>
+        <option value="Kinyarwanda">Kinyarwanda</option>
+    </select>
+
+    <button type="submit">Translate</button>
+</form>
+
+<div id="status"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
