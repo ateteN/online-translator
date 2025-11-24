@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://your-render-url.onrender.com";
+const BACKEND_URL = "https://online-translator-4.onrender.com";
 
 document.getElementById("uploadForm").addEventListener("submit", async (e) => {
     e.preventDefault();
