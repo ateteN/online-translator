@@ -4,21 +4,25 @@ from fastapi.middleware.cors import CORSMiddleware
 from docx import Document
 import fitz
 import openai
-import uvicorn
 import os
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-app = FastAPI()
+app = FastAPI(title="Online Translator API")
 
 # Allow frontend domain
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # You can restrict to your frontend domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- ROOT ROUTE ---
+@app.get("/")
+async def root():
+    return {"message": "Translator backend is running!"}
 
 # --- DOCX READER ---
 def read_docx(path):
@@ -61,22 +65,28 @@ def write_doc(paragraphs, translations, output_path):
         doc.add_paragraph("")
     doc.save(output_path)
 
+# --- TRANSLATE ENDPOINT ---
 @app.post("/translate")
 async def translate_doc(document: UploadFile, language: str = Form(...)):
-    filename = "input." + document.filename.split(".")[-1]
-    
-    with open(filename, "wb") as f:
-        f.write(await document.read())
+    try:
+        filename = f"input.{document.filename.split('.')[-1]}"
+        with open(filename, "wb") as f:
+            f.write(await document.read())
 
-    if filename.endswith(".docx"):
-        paragraphs = read_docx(filename)
-    else:
-        paragraphs = read_pdf(filename)
+        if filename.endswith(".docx"):
+            paragraphs = read_docx(filename)
+        else:
+            paragraphs = read_pdf(filename)
 
-    translations = [translate(p, language) for p in paragraphs]
+        translations = [translate(p, language) for p in paragraphs]
 
-    output_path = "translated_output.docx"
-    write_doc(paragraphs, translations, output_path)
+        output_path = "translated_output.docx"
+        write_doc(paragraphs, translations, output_path)
 
-    return FileResponse(output_path, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-
+        return FileResponse(
+            output_path,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename="translated_output.docx"
+        )
+    except Exception as e:
+        return {"error": str(e)}
