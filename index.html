@@ -11,10 +11,10 @@
 
 <form id="uploadForm">
     <label>Select file (.pdf or .docx):</label>
-    <input type="file" id="fileInput" required>
+    <input type="file" id="fileInput" name="document" required>
 
     <label>Translate to:</label>
-    <select id="language">
+    <select id="language" name="language">
         <option value="English">English</option>
         <option value="French">French</option>
         <option value="Kinyarwanda">Kinyarwanda</option>
@@ -22,6 +22,7 @@
 
     <button type="submit">Translate</button>
 </form>
+
 
 <div id="status"></div>
 
